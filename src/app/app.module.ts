@@ -14,6 +14,7 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     HeaderComponent,
+    
   ],
   imports: [
     RouterModule.forRoot(routes),
