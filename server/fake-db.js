@@ -1,5 +1,5 @@
 const Rental =require('./models/rental')
-
+const User =require('./models/user');
 class FakeDb{
     constructor(){
         this.rentals = [{
@@ -34,21 +34,30 @@ class FakeDb{
             shared: true,
             description: "Very nice apartment in center of the city.",
             dailyRate: 23
-}]
+}];
+    this.users =[{
+        usernmae :"Test User",
+        email :"test@gmail.com",
+        password:"testtest"
+    }];
     }
     async cleanDb() {
+        await User.remove({});
        await Rental.remove({});
     }
-    pushRentalsToDb(){
+    pushDataToDb(){
+        const user =new User(this.users[0]);//above defined user this.users[0]
         this.rentals.forEach((rental) => {
             const newRental = Rental(rental);
-            newRental.save();
-        })
-
+            newRental.user =user; //assign the user to rentals
+            user.rentals.push(newRental)//push rentals to user rental
+            newRental.save();//means rental was created by this user
+        });
+      user.save();
     }
-    seedDb(){
-        this.cleanDb()
-        this.pushRentalsToDb();
+       async seedDb(){
+        await this.cleanDb()
+        this.pushDataToDb();
     }
 }
 module.exports = FakeDb;
